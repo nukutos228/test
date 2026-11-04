@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070d20">
+<meta name="description" content="РАСПИСАНИЕ — независимый информационный проект для просмотра расписания занятий.">
+<title>РАСПИСАНИЕ — независимый проект</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg:#070d20;
+  --panel:#0e1933;
+  --panel2:#14264b;
+  --border:rgba(105,150,255,.2);
+  --blue:#13b9ff;
+  --purple:#9652ff;
+  --text:#f5f7ff;
+  --muted:#9aafd5;
+  --green:#16e6a0;
+  --warning:#ffc76b;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  min-height:100vh;
+  color:var(--text);
+  font-family:Manrope,Arial,sans-serif;
+  background:
+    radial-gradient(ellipse at 10% 0%,rgba(0,107,255,.16),transparent 35%),
+    radial-gradient(ellipse at 95% 15%,rgba(135,49,255,.12),transparent 32%),
+    var(--bg);
+}
+
+button,input { font:inherit; }
+button { color:inherit; }
+
+button:focus-visible,input:focus-visible {
+  outline:2px solid var(--blue);
+  outline-offset:3px;
+}
+
+.container {
+  width:min(1440px,100%);
+  margin:auto;
+  padding:0 28px;
+}
+
+/* HEADER */
+
+header {
+  min-height:100px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+  z-index:30;
+}
+
+.brand {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-shrink:0;
+}
+
+.logo {
+  width:57px;
+  height:57px;
+  border-radius:17px;
+  display:grid;
+  place-items:center;
+  font-size:27px;
+  background:linear-gradient(135deg,#087cff,#9d48ff);
+  box-shadow:0 0 25px rgba(43,123,255,.4);
+}
+
+.brand-title {
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+.brand-subtitle {
+  color:#9eb8e9;
+  font-size:10px;
+  letter-spacing:1.1px;
+  margin-top:3px;
+}
+
+.nav {
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.nav button {
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:12px;
+  padding:11px 15px;
+  color:#b5c6e9;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.nav button:hover,
+.nav button.active {
+  color:white;
+  border-color:rgba(35,169,255,.5);
+  background:rgba(24,105,255,.16);
+}
+
+.header-right {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-shrink:0;
+}
+
+.status {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--border);
+  border-radius:30px;
+  padding:9px 13px;
+  color:#c8d6f3;
+  font-size:11px;
+}
+
+.dot {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--warning);
+  box-shadow:0 0 10px var(--warning);
+}
+
+.menu-toggle {
+  display:none;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:9px 12px;
+  cursor:pointer;
+  font-size:19px;
+  min-width:43px;
+  min-height:43px;
+}
+
+/* HERO */
+
+.hero {
+  margin:27px 0 22px;
+  min-height:215px;
+  border-radius:23px;
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  align-items:center;
+  padding:35px 42px;
+  border:1px solid rgba(51,128,255,.5);
+  background:
+    radial-gradient(circle at 82% 50%,rgba(93,50,255,.3),transparent 34%),
+    linear-gradient(110deg,#0b1b43,#10164a 65%,#19103e);
+}
+
+.hero-content {
+  position:relative;
+  z-index:2;
+  max-width:680px;
+}
+
+.hero-label {
+  color:#67caff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.6px;
+}
+
+.hero h1 {
+  font-size:clamp(29px,4vw,46px);
+  line-height:1.2;
+  margin:12px 0;
+  font-weight:800;
+}
+
+.gradient {
+  background:linear-gradient(90deg,#14d5ff,#a66aff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.hero p {
+  color:#c2d1f0;
+  font-size:13px;
+  line-height:1.7;
+}
+
+.hero-art {
+  position:absolute;
+  right:65px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:110px;
+  filter:drop-shadow(0 0 25px #417dff);
+  opacity:.85;
+  pointer-events:none;
+}
+
+/* LAYOUT */
+
+.main-layout {
+  display:grid;
+  grid-template-columns:290px minmax(0,1fr);
+  gap:20px;
+  align-items:start;
+}
+
+.panel {
+  min-width:0;
+  background:linear-gradient(145deg,rgba(16,31,65,.97),rgba(10,20,43,.97));
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:21px;
+  box-shadow:0 12px 35px rgba(0,0,0,.12);
+}
+
+.panel-title {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  font-size:17px;
+  font-weight:800;
+  margin-bottom:19px;
+}
+
+/* SEARCH AND CLASSES */
+
+.search-box {
+  position:relative;
+  margin-bottom:16px;
+}
+
+.search-symbol {
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#7d9bcf;
+  font-size:18px;
+  pointer-events:none;
+}
+
+.search {
+  width:100%;
+  padding:13px 13px 13px 42px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  outline:none;
+  color:white;
+  background:#09152e;
+  font-size:13px;
+}
+
+.search::placeholder { color:#7890bb; }
+.search:focus { border-color:var(--blue); }
+
+.class-list {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+}
+
+.class-btn {
+  min-height:48px;
+  border:1px solid rgba(83,128,224,.27);
+  background:linear-gradient(145deg,#14264d,#0d1b39);
+  border-radius:12px;
+  color:#d5e1ff;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.class-btn:hover {
+  border-color:#3b9fff;
+  transform:translateY(-2px);
+}
+
+.class-btn.active {
+  color:white;
+  border-color:#35c4ff;
+  background:linear-gradient(135deg,#087fff,#8047f4);
+  box-shadow:0 0 18px rgba(39,139,255,.3);
+}
+
+.empty-classes {
+  grid-column:1/-1;
+  color:var(--muted);
+  font-size:12px;
+  padding:12px 0;
+  line-height:1.6;
+}
+
+.selected-info {
+  margin-top:19px;
+  padding:14px;
+  border-radius:13px;
+  background:rgba(5,14,34,.7);
+  border:1px solid var(--border);
+}
+
+.small-label {
+  font-size:10px;
+  letter-spacing:1.3px;
+  color:#8ca5d2;
+}
+
+.selected-value {
+  margin-top:6px;
+  font-weight:800;
+  font-size:18px;
+}
+
+/* SCHEDULE */
+
+.schedule-heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.schedule-heading h2 { font-size:21px; }
+
+.schedule-heading p {
+  color:var(--muted);
+  font-size:12px;
+  margin-top:5px;
+}
+
+.source-status {
+  color:#ffe0a6;
+  background:rgba(255,190,80,.09);
+  border:1px solid rgba(255,190,80,.3);
+  padding:8px 11px;
+  border-radius:20px;
+  font-size:10px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+/* DAYS */
+
+.week {
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  padding:2px 2px 9px;
+  scrollbar-width:thin;
+}
+
+.day-btn {
+  flex:1;
+  min-width:90px;
+  border:1px solid var(--border);
+  background:#101e3d;
+  color:#c6d5f4;
+  border-radius:12px;
+  padding:12px 7px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.day-btn strong {
+  display:block;
+  font-size:12px;
+}
+
+.day-btn small {
+  display:block;
+  margin-top:5px;
+  font-size:10px;
+  color:#8da6d3;
+}
+
+.day-btn:hover { border-color:#428fff; }
+
+.day-btn.active {
+  color:white;
+  border-color:#38baff;
+  background:linear-gradient(125deg,#087eff,#8149ed);
+  box-shadow:0 0 18px rgba(41,131,255,.3);
+}
+
+.day-btn.active small { color:#e0eaff; }
+
+/* LESSONS */
+
+.table-wrap {
+  margin-top:18px;
+  overflow-x:auto;
+  max-width:100%;
+}
+
+.lesson-table {
+  width:100%;
+  min-width:400px;
+  border-collapse:separate;
+  border-spacing:0 5px;
+  text-align:left;
+}
+
+.lesson-table th {
+  padding:12px 10px;
+  color:#9bb5e4;
+  font-size:11px;
+  font-weight:600;
+}
+
+.lesson-table td {
+  padding:13px 10px;
+  background:#14264c;
+  border-top:1px solid rgba(105,151,255,.08);
+  border-bottom:1px solid rgba(105,151,255,.08);
+  font-size:12px;
+}
+
+.lesson-table tbody tr:hover td { background:#1b3567; }
+
+.lesson-table td:first-child {
+  border-radius:11px 0 0 11px;
+  width:45px;
+  color:#7fcaff;
+  font-weight:800;
+}
+
+.lesson-table td:last-child { border-radius:0 11px 11px 0; }
+
+.lesson-name {
+  font-weight:800;
+  color:white;
+}
+
+.lesson-time {
+  white-space:nowrap;
+  color:#c1d2f3;
+}
+
+.lesson-room { color:#b4c9ef; }
+
+.subject-icon {
+  display:inline-block;
+  margin-right:7px;
+}
+
+.mobile-lessons {
+  display:none;
+  margin-top:17px;
+  gap:9px;
+}
+
+.mobile-lesson {
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  gap:11px;
+  align-items:center;
+  padding:13px;
+  border-radius:13px;
+  background:#14264c;
+  border:1px solid rgba(105,151,255,.12);
+}
+
+.mobile-number {
+  width:39px;
+  height:39px;
+  border-radius:11px;
+  display:grid;
+  place-items:center;
+  background:#203d70;
+  color:#8bd4ff;
+  font-weight:800;
+}
+
+.mobile-subject {
+  font-size:13px;
+  font-weight:800;
+  overflow-wrap:anywhere;
+}
+
+.mobile-time {
+  font-size:11px;
+  color:#b8c9e9;
+  margin-top:4px;
+}
+
+.mobile-details {
+  grid-column:2;
+  color:#9eafd1;
+  font-size:10px;
+  margin-top:-5px;
+}
+
+.no-lessons {
+  text-align:center;
+  padding:35px 15px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.8;
+}
+
+.no-lessons strong {
+  display:block;
+  color:#dce8ff;
+  font-size:16px;
+  margin-bottom:8px;
+}
+
+/* NOTICE AND STATS */
+
+.notice {
+  display:flex;
+  gap:13px;
+  padding:15px;
+  margin-top:17px;
+  border-radius:13px;
+  background:rgba(88,81,255,.09);
+  border:1px solid rgba(123,106,255,.2);
+}
+
+.notice-icon {
+  font-size:22px;
+  flex-shrink:0;
+}
+
+.notice strong { font-size:12px; }
+
+.notice p {
+  margin-top:5px;
+  color:#9eafd0;
+  font-size:11px;
+  line-height:1.6;
+}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:15px;
+  margin-top:19px;
+}
+
+.stat-card {
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:17px;
+  min-height:88px;
+  border-radius:16px;
+  background:linear-gradient(130deg,#102b60,#111c42);
+  border:1px solid rgba(48,133,255,.35);
+  min-width:0;
+}
+
+.stat-icon {
+  font-size:26px;
+  flex-shrink:0;
+}
+
+.stat-card strong {
+  display:block;
+  font-size:14px;
+  overflow-wrap:anywhere;
+}
+
+.stat-card span {
+  display:block;
+  margin-top:4px;
+  color:#9db3dd;
+  font-size:10px;
+}
+
+footer {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-top:32px;
+  padding:21px 0;
+  border-top:1px solid var(--border);
+  color:#8096bd;
+  font-size:11px;
+}
+
+/* DIALOGS */
+
+dialog {
+  width:min(440px,calc(100% - 30px));
+  max-height:calc(100dvh - 30px);
+  margin:auto;
+  padding:0;
+  border:1px solid var(--border);
+  border-radius:19px;
+  background:#101d3c;
+  color:var(--text);
+  box-shadow:0 20px 80px #000a;
+  overflow-y:auto;
+}
+
+dialog::backdrop {
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(5px);
+}
+
+.dialog-content { padding:24px; }
+
+.dialog-content h2 {
+  font-size:20px;
+  margin-bottom:12px;
+}
+
+.dialog-content p {
+  font-size:13px;
+  line-height:1.7;
+  color:#b3c5e8;
+}
+
+.dialog-close {
+  margin-top:20px;
+  padding:10px 17px;
+  border:0;
+  border-radius:10px;
+  background:linear-gradient(120deg,#087fff,#8047f4);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* TABLET */
+
+@media(max-width:1000px) {
+  .main-layout { grid-template-columns:250px minmax(0,1fr); }
+  .nav button { padding:10px; font-size:12px; }
+  .hero-art { right:25px; opacity:.5; }
+}
+
+/* MOBILE */
+
+@media(max-width:760px) {
+  .container { padding:0 13px; }
+  header { min-height:80px; }
+  .logo { width:46px; height:46px; font-size:22px; }
+  .brand { gap:9px; }
+  .brand-title { font-size:16px; }
+  .brand-subtitle { font-size:8px; letter-spacing:.8px; }
+  .header-right { margin-left:auto; }
+  .status { display:none; }
+  .menu-toggle { display:block; }
+
+  .nav {
+    display:none;
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    right:0;
+    z-index:40;
+    padding:10px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#101d3c;
+    box-shadow:0 15px 35px rgba(0,0,0,.4);
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .nav.open { display:flex; }
+  .nav button { text-align:left; padding:13px; width:100%; }
+
+  .hero {
+    min-height:180px;
+    padding:25px 20px;
+    margin-top:19px;
+  }
+
+  .hero-content { max-width:100%; padding-right:35px; }
+  .hero h1 { font-size:27px; }
+  .hero p { font-size:12px; max-width:260px; }
+  .hero-art { font-size:65px; right:10px; opacity:.22; }
+
+  .main-layout { grid-template-columns:1fr; }
+  .panel { padding:16px; }
+  .class-list { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .schedule-heading { align-items:flex-start; flex-wrap:wrap; }
+  .schedule-heading h2 { font-size:18px; }
+  .table-wrap { display:none; }
+  .mobile-lessons { display:grid; }
+  .stats { grid-template-columns:1fr; gap:9px; }
+  .stat-card { min-height:67px; }
+
+  footer {
+    flex-direction:column;
+    align-items:flex-start;
+    line-height:1.6;
+  }
+}
+
+@media(max-width:420px) {
+  .container { padding:0 10px; }
+  .brand-title { font-size:14px; }
+  .brand-subtitle { font-size:7px; }
+  .header-right { gap:6px; }
+  .hero { padding:22px 15px; }
+  .hero h1 { font-size:24px; }
+  .hero-content { padding-right:15px; }
+  .schedule-heading { gap:9px; }
+  .source-status { font-size:9px; padding:7px; }
+  .class-list { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+
+@media(max-width:340px) {
+  .brand-title { font-size:12px; }
+  .brand-subtitle { font-size:6px; }
+  .logo { width:39px; height:39px; border-radius:12px; font-size:19px; }
+  .hero h1 { font-size:21px; }
+  .class-btn { min-height:42px; font-size:12px; }
+  .panel { padding:12px; }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    scroll-behavior:auto !important;
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="brand">
+    <div class="logo" aria-hidden="true">📚</div>
+    <div>
+      <div class="brand-title">РАСПИСАНИЕ</div>
+      <div class="brand-subtitle">НЕЗАВИСИМЫЙ ПРОЕКТ</div>
+    </div>
+  </div>
+
+  <nav class="nav" id="navigation" aria-label="Главная навигация">
+    <button class="active" type="button" data-section="home">⌂ Главная</button>
+    <button type="button" data-section="about">ⓘ О проекте</button>
+    <button type="button" data-section="help">✦ Помощь</button>
+  </nav>
+
+  <div class="header-right">
+    <div class="status">
+      <span class="dot" id="statusDot"></span>
+      <span id="connectionStatus">Ожидание данных</span>
+    </div>
+
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      type="button"
+      aria-label="Открыть меню"
+      aria-controls="navigation"
+      aria-expanded="false"
+    >☰</button>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-label">НЕЗАВИСИМЫЙ ИНФОРМАЦИОННЫЙ ПРОЕКТ</div>
+
+    <h1>
+      Успех начинается<br>
+      <span class="gradient">с хорошего расписания!</span>
+    </h1>
+
+    <p>Выбирай класс, смотри расписание занятий и планируй учебный день.</p>
+  </div>
+
+  <div class="hero-art" aria-hidden="true">📚</div>
+</section>
+
+<main class="main-layout">
+
+  <aside class="panel">
+    <h2 class="panel-title">
+      <span>▰</span>
+      Выбор класса
+    </h2>
+
+    <div class="search-box">
+      <span class="search-symbol" aria-hidden="true">⌕</span>
+      <input
+        type="search"
+        class="search"
+        id="classSearch"
+        placeholder="Поиск класса..."
+        autocomplete="off"
+        aria-label="Поиск класса"
+      >
+    </div>
+
+    <div class="class-list" id="classList">
+      <div class="empty-classes">Классы пока не загружены.</div>
+    </div>
+
+    <div class="selected-info">
+      <div class="small-label">ВЫБРАННЫЙ КЛАСС</div>
+      <div class="selected-value" id="selectedClass">Не выбран</div>
+    </div>
+  </aside>
+
+  <section class="panel" aria-labelledby="scheduleTitle">
+    <div class="schedule-heading">
+      <div>
+        <h2 id="scheduleTitle">▦ Расписание занятий</h2>
+        <p id="scheduleCaption">Выберите класс</p>
+      </div>
+
+      <div class="source-status" id="sourceStatus">● НЕТ ДАННЫХ</div>
+    </div>
+
+    <div class="week" id="week" aria-label="Дни недели"></div>
+
+    <div class="table-wrap">
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Время</th>
+            <th>Предмет</th>
+            <th>Кабинет</th>
+          </tr>
+        </thead>
+        <tbody id="lessonBody"></tbody>
+      </table>
+    </div>
+
+    <div class="mobile-lessons" id="mobileLessons"></div>
+
+    <div class="notice">
+      <div class="notice-icon">💡</div>
+      <div>
+        <strong>Информация о расписании</strong>
+        <p id="noticeText">
+          Настоящее расписание пока не подключено.
+          После подключения данные будут загружаться автоматически.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="stats">
+  <div class="stat-card">
+    <div class="stat-icon">📅</div>
+    <div>
+      <strong id="statClass">—</strong>
+      <span>Выбранный класс</span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">📖</div>
+    <div>
+      <strong id="statLessons">Нет данных</strong>
+      <span id="statLessonsCaption">Количество уроков</span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">⚡</div>
+    <div>
+      <strong id="statUpdate">Ожидание</strong>
+      <span>Последнее обновление</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 <strong>РАСПИСАНИЕ</strong>. Независимый проект.</span>
+  <span>Не является официальным сайтом школы.</span>
+</footer>
+
+</div>
+
+<dialog id="infoDialog" aria-labelledby="dialogTitle">
+  <div class="dialog-content">
+    <h2 id="dialogTitle">О проекте</h2>
+    <p id="dialogText"></p>
+    <button class="dialog-close" id="dialogClose" type="button">
+      Закрыть
+    </button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+
+/*
+ * НЕЗАВИСИМЫЙ ПРОЕКТ «РАСПИСАНИЕ»
+ *
+ * Основной файл данных: ./schedule.json
+ * Резервная копия: localStorage браузера.
+ * Автоматическая проверка обновлений: каждые 5 минут.
+ *
+ * Этот интерфейс сам по себе не скачивает данные с NIKA-Soft.
+ * Для этого потребуется отдельный разрешённый механизм синхронизации.
+ */
+
+const DATA_URL = "./schedule.json";
+const CACHE_KEY = "raspisanie-last-valid-data";
+const SELECTED_CLASS_KEY = "raspisanie-selected-class";
+const UPDATE_INTERVAL = 5 * 60 * 1000;
+const REQUEST_TIMEOUT = 15000;
+
+const days = [
+  {short:"Пн",full:"Понедельник"},
+  {short:"Вт",full:"Вторник"},
+  {short:"Ср",full:"Среда"},
+  {short:"Чт",full:"Четверг"},
+  {short:"Пт",full:"Пятница"}
+];
+
+const elements = {
+  classList:document.getElementById("classList"),
+  classSearch:document.getElementById("classSearch"),
+  selectedClass:document.getElementById("selectedClass"),
+  scheduleCaption:document.getElementById("scheduleCaption"),
+  lessonBody:document.getElementById("lessonBody"),
+  mobileLessons:document.getElementById("mobileLessons"),
+  week:document.getElementById("week"),
+  statClass:document.getElementById("statClass"),
+  statLessons:document.getElementById("statLessons"),
+  statLessonsCaption:document.getElementById("statLessonsCaption"),
+  statUpdate:document.getElementById("statUpdate"),
+  noticeText:document.getElementById("noticeText"),
+  sourceStatus:document.getElementById("sourceStatus"),
+  connectionStatus:document.getElementById("connectionStatus"),
+  statusDot:document.getElementById("statusDot"),
+  dialog:document.getElementById("infoDialog"),
+  dialogTitle:document.getElementById("dialogTitle"),
+  dialogText:document.getElementById("dialogText")
+};
+
+const menuToggle = document.getElementById("menuToggle");
+const navigation = document.getElementById("navigation");
+
+let scheduleData = null;
+let classes = [];
+let selectedClass = "";
+let selectedDay = getCurrentDay() ?? 0;
+let dialogFallbackMode = false;
+let isLoading = false;
+let lastDataIsCached = false;
+let lastUpdateTime = null;
+let requestController = null;
+
+function getCurrentDay() {
+  const weekday = new Date().getDay();
+  return weekday >= 1 && weekday <= 5 ? weekday - 1 : null;
+}
+
+function createElement(tag,className,text) {
+  const element = document.createElement(tag);
+
+  if (className) element.className = className;
+  if (text !== undefined) element.textContent = String(text);
+
+  return element;
+}
+
+/* STATUS */
+
+function setConnectionStatus(text,mode) {
+  elements.connectionStatus.textContent = text;
+
+  if (mode === "success") {
+    elements.statusDot.style.background = "var(--green)";
+    elements.statusDot.style.boxShadow = "0 0 10px var(--green)";
+  } else if (mode === "error") {
+    elements.statusDot.style.background = "#ff7474";
+    elements.statusDot.style.boxShadow = "0 0 10px #ff7474";
+  } else {
+    elements.statusDot.style.background = "var(--warning)";
+    elements.statusDot.style.boxShadow = "0 0 10px var(--warning)";
+  }
+}
+
+function setSourceStatus(text,mode = "warning") {
+  elements.sourceStatus.textContent = text;
+
+  if (mode === "success") {
+    elements.sourceStatus.style.color = "#9dffdc";
+    elements.sourceStatus.style.borderColor = "rgba(22,230,160,.3)";
+    elements.sourceStatus.style.background = "rgba(22,230,160,.08)";
+  } else if (mode === "error") {
+    elements.sourceStatus.style.color = "#ffb5b5";
+    elements.sourceStatus.style.borderColor = "rgba(255,100,100,.3)";
+    elements.sourceStatus.style.background = "rgba(255,100,100,.08)";
+  } else {
+    elements.sourceStatus.style.color = "#ffe0a6";
+    elements.sourceStatus.style.borderColor = "rgba(255,190,80,.3)";
+    elements.sourceStatus.style.background = "rgba(255,190,80,.09)";
+  }
+}
+
+/* DATA VALIDATION */
+
+function validateSchedule(data) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return false;
+  }
+
+  if (
+    !data.classes ||
+    typeof data.classes !== "object" ||
+    Array.isArray(data.classes)
+  ) {
+    return false;
+  }
+
+  const classNames = Object.keys(data.classes);
+
+  if (classNames.length === 0) return false;
+
+  let totalLessons = 0;
+
+  for (const className of classNames) {
+    if (
+      typeof className !== "string" ||
+      !className.trim()
+    ) {
+      return false;
+    }
+
+    const classData = data.classes[className];
+
+    if (
+      !classData ||
+      typeof classData !== "object" ||
+      Array.isArray(classData)
+    ) {
+      return false;
+    }
+
+    for (const day of days) {
+      if (!Object.prototype.hasOwnProperty.call(classData,day.full)) {
+        continue;
+      }
+
+      const lessons = classData[day.full];
+
+      if (!Array.isArray(lessons)) return false;
+
+      for (const lesson of lessons) {
+        if (
+          !lesson ||
+          typeof lesson !== "object" ||
+          Array.isArray(lesson)
+        ) {
+          return false;
+        }
+
+        const hasUsefulField =
+          typeof lesson.subject === "string" ||
+          typeof lesson.time === "string" ||
+          typeof lesson.room === "string";
+
+        if (!hasUsefulField) return false;
+
+        totalLessons++;
+      }
+    }
+  }
+
+  return totalLessons > 0;
+}
+
+/* SAFE STORAGE */
+
+function saveBackup(data) {
+  try {
+    localStorage.setItem(CACHE_KEY,JSON.stringify({
+      savedAt:new Date().toISOString(),
+      data
+    }));
+  } catch (error) {
+    console.warn("Не удалось сохранить резервную копию:",error);
+  }
+}
+
+function readBackup() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+
+    if (!raw) return null;
+
+    const backup = JSON.parse(raw);
+
+    if (
+      !backup ||
+      !backup.data ||
+      !validateSchedule(backup.data)
+    ) {
+      return null;
+    }
+
+    return backup;
+  } catch (error) {
+    console.warn("Не удалось прочитать резервную копию:",error);
+    return null;
+  }
+}
+
+function saveSelectedClass(name) {
+  try {
+    localStorage.setItem(SELECTED_CLASS_KEY,name);
+  } catch {}
+}
+
+function readSelectedClass() {
+  try {
+    return localStorage.getItem(SELECTED_CLASS_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+/* APPLY DATA */
+
+function applySchedule(data,{cached = false} = {}) {
+  if (!validateSchedule(data)) {
+    throw new Error("Файл расписания пустой или имеет неправильную структуру");
+  }
+
+  scheduleData = data;
+  classes = Object.keys(data.classes).sort((a,b) =>
+    a.localeCompare(b,"ru",{numeric:true})
+  );
+
+  const savedClass = readSelectedClass();
+
+  if (classes.includes(savedClass)) {
+    selectedClass = savedClass;
+  } else if (!classes.includes(selectedClass)) {
+    selectedClass = classes[0] || "";
+  }
+
+  lastDataIsCached = cached;
+
+  renderClasses(elements.classSearch.value);
+  renderDays();
+  renderSchedule();
+  renderUpdateDate(data.updatedAt);
+
+  if (cached) {
+    setConnectionStatus("Сохранённые данные","loading");
+    setSourceStatus("● ПОСЛЕДНЯЯ ВЕРСИЯ","warning");
+
+    elements.noticeText.textContent =
+      "Источник временно недоступен. Показана последняя корректная сохранённая версия. Она может быть устаревшей.";
+  } else {
+    setConnectionStatus("Данные загружены","success");
+    setSourceStatus("● ДАННЫЕ ЗАГРУЖЕНЫ","success");
+
+    elements.noticeText.textContent =
+      "Данные загружены из файла расписания. Сайт будет периодически проверять наличие обновлений.";
+  }
+}
+
+/* DAYS */
+
+function renderDays() {
+  elements.week.innerHTML = "";
+
+  days.forEach((day,index) => {
+    const button = createElement(
+      "button",
+      "day-btn" + (index === selectedDay ? " active" : "")
+    );
+
+    button.type = "button";
+    button.setAttribute("aria-pressed",String(index === selectedDay));
+
+    button.append(
+      createElement("strong","",day.full),
+      createElement("small","",day.short)
+    );
+
+    button.addEventListener("click",() => {
+      selectedDay = index;
+      renderDays();
+      renderSchedule();
+    });
+
+    elements.week.appendChild(button);
+  });
+}
+
+/* CLASSES */
+
+function renderClasses(filter = "") {
+  elements.classList.innerHTML = "";
+
+  const query = filter.trim().toLowerCase();
+
+  const filtered = classes.filter(name =>
+    name.toLowerCase().includes(query)
+  );
+
+  if (filtered.length === 0) {
+    elements.classList.appendChild(
+      createElement(
+        "div",
+        "empty-classes",
+        classes.length
+          ? "Класс не найден."
+          : "Классы пока не загружены. Расписание недоступно."
+      )
+    );
+    return;
+  }
+
+  filtered.forEach(name => {
+    const button = createElement(
+      "button",
+      "class-btn" + (name === selectedClass ? " active" : ""),
+      name
+    );
+
+    button.type = "button";
+    button.setAttribute("aria-pressed",String(name === selectedClass));
+
+    button.addEventListener("click",() => {
+      selectedClass = name;
+      saveSelectedClass(name);
+      renderClasses(elements.classSearch.value);
+      renderSchedule();
+    });
+
+    elements.classList.appendChild(button);
+  });
+}
+
+/* EMPTY STATES */
+
+function renderEmptySchedule(
+  title = "Расписание пока недоступно",
+  description = "Когда данные появятся, здесь автоматически отобразится расписание занятий."
+) {
+  elements.lessonBody.innerHTML = "";
+  elements.mobileLessons.innerHTML = "";
+
+  const mobileMessage = createElement("div","no-lessons");
+
+  mobileMessage.append(
+    createElement("strong","",title),
+    createElement("span","",description)
+  );
+
+  elements.mobileLessons.appendChild(mobileMessage);
+
+  const row = document.createElement("tr");
+  const cell = document.createElement("td");
+
+  cell.colSpan = 4;
+  cell.className = "no-lessons";
+  cell.textContent = title;
+
+  row.appendChild(cell);
+  elements.lessonBody.appendChild(row);
+}
+
+/* LESSONS */
+
+function renderLessons(lessons) {
+  elements.lessonBody.innerHTML = "";
+  elements.mobileLessons.innerHTML = "";
+
+  lessons.forEach((lesson,index) => {
+    const time = lesson.time || "Время не указано";
+    const subject = lesson.subject || "Предмет не указан";
+    const room = lesson.room || "Не указан";
+    const iconText = lesson.icon || "📘";
+
+    /* Desktop table */
+
+    const row = document.createElement("tr");
+
+    const numberCell = createElement("td","",String(index + 1));
+    const timeCell = createElement("td","lesson-time",time);
+    const subjectCell = document.createElement("td");
+    const roomCell = createElement("td","lesson-room",room);
+
+    const icon = createElement("span","subject-icon",iconText);
+    const subjectName = createElement("span","lesson-name",subject);
+
+    subjectCell.append(icon,subjectName);
+    row.append(numberCell,timeCell,subjectCell,roomCell);
+
+    elements.lessonBody.appendChild(row);
+
+    /* Mobile card */
+
+    const card = createElement("article","mobile-lesson");
+
+    const number = createElement(
+      "div",
+      "mobile-number",
+      String(index + 1)
+    );
+
+    const main = document.createElement("div");
+
+    main.append(
+      createElement("div","mobile-subject",subject),
+      createElement("div","mobile-time",time)
+    );
+
+    const details = createElement(
+      "div",
+      "mobile-details",
+      "Кабинет: " + room
+    );
+
+    card.append(number,main,details);
+    elements.mobileLessons.appendChild(card);
+  });
+}
+
+/* SCHEDULE */
+
+function renderSchedule() {
+  elements.selectedClass.textContent = selectedClass || "Не выбран";
+  elements.statClass.textContent = selectedClass || "—";
+
+  if (!scheduleData || !selectedClass) {
+    elements.scheduleCaption.textContent = "Выберите класс";
+    elements.statLessons.textContent = "Нет данных";
+    elements.statLessonsCaption.textContent = "Количество уроков";
+
+    renderEmptySchedule();
+    return;
+  }
+
+  const dayName = days[selectedDay].full;
+  const classData = scheduleData.classes[selectedClass];
+
+  elements.scheduleCaption.textContent =
+    `Класс ${selectedClass} · ${dayName}`;
+
+  elements.statLessonsCaption.textContent =
+    `${dayName} по расписанию`;
+
+  if (
+    !classData ||
+    !Object.prototype.hasOwnProperty.call(classData,dayName)
+  ) {
+    renderEmptySchedule(
+      "Данные за этот день отсутствуют",
+      "Для выбранного дня в загруженном файле нет информации."
+    );
+
+    elements.statLessons.textContent = "Нет данных";
+    return;
+  }
+
+  const lessons = classData[dayName];
+
+  if (!Array.isArray(lessons)) {
+    renderEmptySchedule(
+      "Не удалось прочитать расписание",
+      "Данные за этот день имеют неправильный формат."
+    );
+
+    elements.statLessons.textContent = "Нет данных";
+    return;
+  }
+
+  if (lessons.length === 0) {
+    renderEmptySchedule(
+      "На этот день уроков нет",
+      "В загруженном расписании для этого дня нет занятий."
+    );
+
+    elements.statLessons.textContent = "0 уроков";
+    return;
+  }
+
+  renderLessons(lessons);
+
+  elements.statLessons.textContent = `${lessons.length} уроков`;
+
+  if (lastDataIsCached) {
+    elements.noticeText.textContent =
+      "Показана последняя сохранённая версия расписания. Она может быть устаревшей.";
+  } else {
+    elements.noticeText.textContent =
+      "Показано загруженное расписание. Сайт автоматически проверяет наличие обновлений.";
+  }
+}
+
+/* LAST UPDATE */
+
+function renderUpdateDate(value) {
+  if (!value) {
+    elements.statUpdate.textContent = "Неизвестно";
+    return;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    elements.statUpdate.textContent = "Неизвестно";
+    return;
+  }
+
+  elements.statUpdate.textContent = date.toLocaleString("ru-RU",{
+    day:"2-digit",
+    month:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+/* RESTORE BACKUP */
+
+function restoreBackup() {
+  const backup = readBackup();
+
+  if (!backup) {
+    scheduleData = null;
+    classes = [];
+    selectedClass = "";
+
+    renderClasses();
+    renderSchedule();
+    renderUpdateDate(null);
+
+    setConnectionStatus("Нет данных","error");
+    setSourceStatus("● НЕТ ДАННЫХ","error");
+
+    elements.noticeText.textContent =
+      "Расписание пока недоступно. Ранее сохранённой версии нет. Попробуйте открыть сайт позже.";
+
+    return false;
+  }
+
+  try {
+    applySchedule(backup.data,{cached:true});
+
+    const savedAt = backup.savedAt
+      ? new Date(backup.savedAt)
+      : null;
+
+    if (savedAt && !Number.isNaN(savedAt.getTime())) {
+      const age = Math.max(
+        0,
+        Math.floor((Date.now() - savedAt.getTime()) / 60000)
+      );
+
+      elements.noticeText.textContent =
+        `Источник временно недоступен. Показана сохранённая копия. Последнее сохранение в браузере: ${age} мин. назад.`;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn("Ошибка восстановления копии:",error);
+    return false;
+  }
+}
+
+/* LOAD DATA */
+
+async function loadSchedule() {
+  if (isLoading) return;
+
+  if (!navigator.onLine) {
+    setConnectionStatus("Нет интернета","error");
+
+    if (!restoreBackup()) {
+      elements.noticeText.textContent =
+        "Нет подключения к интернету, а сохранённого расписания пока нет.";
+    }
+
+    return;
+  }
+
+  isLoading = true;
+
+  if (!scheduleData) {
+    setConnectionStatus("Загрузка данных","loading");
+  }
+
+  if (requestController) {
+    requestController.abort();
+  }
+
+  requestController = new AbortController();
+
+  const timeoutId = setTimeout(
+    () => requestController.abort(),
+    REQUEST_TIMEOUT
+  );
+
+  try {
+    const response = await fetch(
+      DATA_URL + "?t=" + Date.now(),
+      {
+        cache:"no-store",
+        signal:requestController.signal
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Ошибка HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!validateSchedule(data)) {
+      throw new Error("Файл расписания не прошёл проверку");
+    }
+
+    /*
+     * sourceStatus=cached или unavailable означает,
+     * что данные не следует считать свежими.
+     */
+
+    const status = String(data.sourceStatus || "fresh").toLowerCase();
+
+    const isStale =
+      status === "cached" ||
+      status === "unavailable" ||
+      status === "stale";
+
+    if (isStale) {
+      applySchedule(data,{cached:true});
+    } else {
+      applySchedule(data,{cached:false});
+      saveBackup(data);
+    }
+
+  } catch (error) {
+    console.warn("Не удалось загрузить расписание:",error);
+
+    setConnectionStatus("Источник недоступен","error");
+
+    if (!restoreBackup()) {
+      setSourceStatus("● НЕТ ДАННЫХ","error");
+
+      elements.noticeText.textContent =
+        "Не удалось загрузить расписание. Последней сохранённой версии пока нет.";
+    } else {
+      setSourceStatus("● ПОСЛЕДНЯЯ ВЕРСИЯ","warning");
+
+      elements.noticeText.textContent =
+        "Не удалось получить свежие данные. Показана последняя сохранённая корректная версия расписания.";
+    }
+
+  } finally {
+    clearTimeout(timeoutId);
+    requestController = null;
+    isLoading = false;
+  }
+}
+
+/* SEARCH */
+
+elements.classSearch.addEventListener("input",event => {
+  renderClasses(event.target.value);
+});
+
+/* DIALOGS */
+
+function openInfo(title,text) {
+  elements.dialogTitle.textContent = title;
+  elements.dialogText.textContent = text;
+
+  if (typeof elements.dialog.showModal === "function") {
+    dialogFallbackMode = false;
+
+    if (!elements.dialog.open) {
+      elements.dialog.showModal();
+    }
+  } else {
+    dialogFallbackMode = true;
+    elements.dialog.setAttribute("open","");
+  }
+}
+
+function closeInfoDialog() {
+  if (dialogFallbackMode) {
+    elements.dialog.removeAttribute("open");
+    return;
+  }
+
+  if (elements.dialog.open) {
+    elements.dialog.close();
+  }
+}
+
+document.getElementById("dialogClose")
+  .addEventListener("click",closeInfoDialog);
+
+elements.dialog.addEventListener("click",event => {
+  if (event.target !== elements.dialog) return;
+
+  const rect = elements.dialog.getBoundingClientRect();
+
+  if (
+    event.clientX < rect.left ||
+    event.clientX > rect.right ||
+    event.clientY < rect.top ||
+    event.clientY > rect.bottom
+  ) {
+    closeInfoDialog();
+  }
+});
+
+/* MOBILE MENU */
+
+function closeMobileMenu(returnFocus = false) {
+  navigation.classList.remove("open");
+
+  menuToggle.setAttribute("aria-expanded","false");
+  menuToggle.setAttribute("aria-label","Открыть меню");
+  menuToggle.textContent = "☰";
+
+  if (returnFocus && window.innerWidth <= 760) {
+    menuToggle.focus();
+  }
+}
+
+menuToggle.addEventListener("click",() => {
+  const isOpen = navigation.classList.toggle("open");
+
+  menuToggle.setAttribute("aria-expanded",String(isOpen));
+  menuToggle.setAttribute(
+    "aria-label",
+    isOpen ? "Закрыть меню" : "Открыть меню"
+  );
+
+  menuToggle.textContent = isOpen ? "✕" : "☰";
+
+  if (isOpen) {
+    navigation.querySelector("button")?.focus();
+  } else {
+    menuToggle.focus();
+  }
+});
+
+document.addEventListener("pointerdown",event => {
+  if (
+    navigation.classList.contains("open") &&
+    !navigation.contains(event.target) &&
+    !menuToggle.contains(event.target)
+  ) {
+    closeMobileMenu();
+  }
+});
+
+document.addEventListener("keydown",event => {
+  if (event.key === "Escape") {
+    if (navigation.classList.contains("open")) {
+      closeMobileMenu(true);
+    }
+
+    if (dialogFallbackMode && elements.dialog.open) {
+      closeInfoDialog();
+    }
+  }
+});
+
+window.addEventListener("resize",() => {
+  if (window.innerWidth > 760) closeMobileMenu();
+});
+
+/* NAVIGATION */
+
+navigation.addEventListener("click",event => {
+  const button = event.target.closest("button[data-section]");
+  if (!button) return;
+
+  navigation.querySelectorAll("button").forEach(item => {
+    item.classList.toggle("active",item === button);
+  });
+
+  const section = button.dataset.section;
+
+  if (section === "home") {
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  if (section === "about") {
+    openInfo(
+      "О проекте",
+      "РАСПИСАНИЕ — независимый информационный проект, созданный частным лицом для удобного просмотра расписания занятий. Сайт не является официальным сайтом школы, не принадлежит образовательной организации, не представляет её администрацию и не заявляет об официальном одобрении. Использование материалов сторонних источников возможно только при наличии соответствующих прав или разрешения. Проект не заменяет официальные источники информации."
+    );
+  }
+
+  if (section === "help") {
+    openInfo(
+      "Помощь",
+      "Выбери класс в блоке выбора класса, затем нажми на нужный день недели. Для поиска класса начни вводить его название в поле поиска. На телефоне уроки отображаются отдельными карточками. Если источник временно недоступен, сайт попробует показать последнюю сохранённую версию расписания."
+    );
+  }
+
+  closeMobileMenu();
+});
+
+/* AUTOMATIC UPDATES */
+
+document.addEventListener("visibilitychange",() => {
+  if (!document.hidden) {
+    loadSchedule();
+  }
+});
+
+window.addEventListener("online",() => {
+  loadSchedule();
+});
+
+setInterval(() => {
+  if (!document.hidden) {
+    loadSchedule();
+  }
+},UPDATE_INTERVAL);
+
+/* FIRST START */
+
+renderDays();
+renderClasses();
+renderSchedule();
+loadSchedule();
+
+</script>
+</body>
+</html>
