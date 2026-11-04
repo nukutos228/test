@@ -3,7 +3,7 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone
 
-SOURCE_URL = "http://raspisanie.nikasoft.ru/12210248.html"
+SOURCE_URL = "https://nukutos228.github.io/6767/"
 OUTPUT_FILE = "schedule.json"
 TIMEOUT = 20
 MAX_SIZE = 5 * 1024 * 1024
